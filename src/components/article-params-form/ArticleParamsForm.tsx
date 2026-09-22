@@ -13,9 +13,13 @@ import { Select } from '@/ui/select';
 import { Separator } from '@/ui/separator';
 import { Text } from '@/ui/text';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
+
+import { useOutsideClickClose } from './hooks/useOutsideClickClose';
+
+import type * as React from 'react';
 
 import styles from './ArticleParamsForm.module.scss';
 
@@ -26,7 +30,15 @@ type ArticleParamsFormProps = {
 export const ArticleParamsForm = ({
   onApply,
 }: ArticleParamsFormProps): React.JSX.Element => {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
   const [isOpen, setIsOpen] = useState(false);
+
+  useOutsideClickClose({
+    isOpen,
+    rootRef,
+    onChange: setIsOpen,
+  });
 
   const handleArrowButtonClick = (): void => {
     setIsOpen((previousValue) => !previousValue);
@@ -57,7 +69,7 @@ export const ArticleParamsForm = ({
   };
 
   return (
-    <>
+    <div ref={rootRef}>
       <ArrowButton isOpen={isOpen} onClick={handleArrowButtonClick} />
 
       <aside className={clsx(styles.container, isOpen && styles.container_open)}>
@@ -104,6 +116,6 @@ export const ArticleParamsForm = ({
           </div>
         </form>
       </aside>
-    </>
+    </div>
   );
 };
